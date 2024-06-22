@@ -11,6 +11,35 @@ const initialGameBoard = [
   [null, null, null],
 ];
 
+function computeWinner(gameBoard) {
+  let winner = null;
+  for (const combination of WINNING_COMBINATIONS) {
+    const firstSquareSymbol =
+      gameBoard[combination[0].row][combination[0].column];
+    const secondSquareSymbol =
+      gameBoard[combination[1].row][combination[1].column];
+    const thirdSquareSymbol =
+      gameBoard[combination[2].row][combination[2].column];
+
+    if (
+      firstSquareSymbol &&
+      firstSquareSymbol === secondSquareSymbol &&
+      firstSquareSymbol === thirdSquareSymbol
+    ) {
+      winner = firstSquareSymbol;
+    }
+  }
+  return winner;
+}
+
+function poupulateGameBoard(gameTurns, gameBoard) {
+  for (const turn of gameTurns) {
+    const { square, player } = turn;
+    const { row, col } = square;
+    gameBoard[row][col] = player;
+  }
+}
+
 function deriveActivePlayer(gameTurns) {
   let currentPlayer = "X";
 
@@ -29,28 +58,9 @@ function App() {
 
   let gameBoard = [...initialGameBoard.map((innerArray) => [...innerArray])];
 
-  for (const turn of gameTurns) {
-    const { square, player } = turn;
-    const { row, col } = square;
-    gameBoard[row][col] = player;
-  }
-  let winner = null;
-  for (const combination of WINNING_COMBINATIONS) {
-    const firstSquareSymbol =
-      gameBoard[combination[0].row][combination[0].column];
-    const secondSquareSymbol =
-      gameBoard[combination[1].row][combination[1].column];
-    const thirdSquareSymbol =
-      gameBoard[combination[2].row][combination[2].column];
+  poupulateGameBoard(gameTurns, gameBoard);
 
-    if (
-      firstSquareSymbol &&
-      firstSquareSymbol === secondSquareSymbol &&
-      firstSquareSymbol === thirdSquareSymbol
-    ) {
-      winner = firstSquareSymbol;
-    }
-  }
+  let winner = computeWinner(gameBoard);
 
   const hasDraw = gameTurns.length === 9 && !winner;
 
